@@ -1,0 +1,102 @@
+unit uLoginDAO;
+
+interface
+
+uses uLoginModel, DBXCommon, SysUtils;
+
+Type
+  TLoginDAO = class
+
+  public
+    function Logar(LoginModel: TLoginModel): Boolean;
+  end;
+
+implementation
+
+uses
+  Dialogs,uLoginModel, uMenuPrincipal, uFrmLogin;
+
+{ TLogionDAO }
+
+function TLoginDAO.Logar(LoginModel: TLoginModel): Boolean;
+var
+  dbcon: TDBXConnection; // objeto para conexão
+  sql: TDBXCommand; // para executar instruções SQL
+  parametro: TDBXParameter; // para parametrizar instruções SQL
+  reader: TDBXReader; // Guardar os resultados de TDBXCommand
+
+begin
+  try
+    try
+
+      dbcon:=TDBXConnectionFactory.GetConnectionFactory.GetConnection('LOGINOO','sysdba','masterkey');
+      sql := dbcon.CreateCommand;
+      sql.Text := 'Select * from USUARIOS where UPPER(USUARIO) = UPPER(?)' + ' and UPPER(SENHA) = UPPER(?)';
+
+      // parametro Usuario
+      parametro := sql.CreateParameter;
+      parametro.DataType := TDBXDataTypes.WideStringType;
+      parametro.Name := 'pUsuario';
+      sql.Parameters.AddParameter(parametro);
+      sql.Parameters.Parameter[0].Value.SetWideString(LoginModel.Usuario);
+
+      // parametro Senha
+      parametro := sql.CreateParameter;
+      parametro.DataType := TDBXDataTypes.WideStringType;
+      parametro.Name := 'pSenha';
+      sql.Parameters.AddParameter(parametro);
+      sql.Parameters.Parameter[1].Value.SetWideString(LoginModel.Senha);
+
+      sql.Prepare; // prepara instrução SQL para executar no banco
+      reader := sql.ExecuteQuery; // Executa o SQl e guarda o resultado no reader
+
+      while (reader.Next) do // Retorna true se o reader não estiver vazio
+        Result := True;
+
+    except
+      on E: Exception do
+        ShowMessage('Não foi possivel Conectar no Sistema' + #13 + E.Message);
+    end;
+  finally
+    FreeAndNil(dbcon);
+    FreeAndNil(sql);
+    FreeAndNil(reader);
+  end;
+end;
+
+procedure TfrmLogin.btnLogarClick(Sender: TObject);
+var
+  LoginModel: TLoginModel;
+  LoginDAO: TLoginDAO;
+begin
+  LoginModel := TLoginModel.Create; // cria Objeto na memoria
+  LoginDAO := TLoginDAO.Create;
+
+  if (edtUsuario.Text = '') or (edtSenha.Text = '') then
+    raise Exception.Create('Informe Usuario e Senha')
+  else
+  begin
+    try
+      LoginModel.Usuario := edtUsuario.Text;
+      LoginModel.Senha := edtSenha.Text;
+      if LoginDAO.Logar(LoginModel) then
+      begin
+        ShowMessage('Login realizado com sucesso');
+      try
+        MenuPrincipal:=TMenuPrincipal.create(self);
+        MenuPrincipal.ShowModal;
+      finally
+        freeAndNil(MenuPrincipal);
+      end;
+
+      end
+      else
+        ShowMessage('Falha no acesso');
+    finally
+      FreeAndNil(LoginModel);
+      FreeAndNil(LoginDAO);
+    end;
+  end;
+end;
+
+end.

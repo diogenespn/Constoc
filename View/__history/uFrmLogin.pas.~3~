@@ -1,0 +1,77 @@
+unit uFrmLogin;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Imaging.jpeg,
+  Vcl.ExtCtrls;
+
+type
+  TfrmLogin = class(TForm)
+    edtUsuario: TEdit;
+    edtSenha: TEdit;
+    btnSair: TButton;
+    btnLogar: TButton;
+    lbl1: TLabel;
+    lbl2: TLabel;
+    Panel1: TPanel;
+    lbl3: TLabel;
+    procedure btnLogarClick(Sender: TObject);
+    procedure btnSairClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmLogin: TfrmLogin;
+
+implementation
+
+{$R *.dfm}
+
+uses uLoginModel, uLoginDAO, uMenuPrincipal;
+
+procedure TfrmLogin.btnLogarClick(Sender: TObject);
+var
+  LoginModel: TLoginModel;
+  LoginDAO: TLoginDAO;
+begin
+  LoginModel := TLoginModel.Create; // cria Objeto na memoria
+  LoginDAO := TLoginDAO.Create;
+
+  if (edtUsuario.Text = '') or (edtSenha.Text = '') then
+    raise Exception.Create('Informe Usuario e Senha')
+  else
+  begin
+    try
+      LoginModel.Usuario := edtUsuario.Text;
+      LoginModel.Senha := edtSenha.Text;
+      if LoginDAO.Logar(LoginModel) then
+      begin
+        ShowMessage('Login realizado com sucesso');
+      try
+        MenuPrincipal:=TMenuPrincipal.create(self);
+        MenuPrincipal.ShowModal;
+      finally
+        freeAndNil(MenuPrincipal);
+      end;
+
+      end
+      else
+        ShowMessage('Falha no acesso');
+    finally
+      FreeAndNil(LoginModel);
+      FreeAndNil(LoginDAO);
+    end;
+  end;
+end;
+
+procedure TfrmLogin.btnSairClick(Sender: TObject);
+begin
+  Application.Terminate;
+end;
+
+end.

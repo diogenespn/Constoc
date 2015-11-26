@@ -1,0 +1,48 @@
+unit UControllerLogin;
+
+interface
+uses SysUtils, Forms, Windows, Dialogs, Generics.Collections,uFrmLogin,
+     uLoginModel;
+type
+  TControllerLogin = class
+    private
+    FLogin:TfrmLogin;
+    procedure Logar(Sender:TObject);
+    procedure Sair(Sender:TObject);
+  public
+    constructor Create;
+  end;
+
+
+
+implementation
+
+uses uLoginDAO,uMenuPrincipal;
+
+
+constructor TControllerLogin.Create;
+begin
+  {$region 'Prepare the events of each control'}
+  FLogin := TFrmLogin.Create(nil);
+  try
+    FLogin.btnLogar.OnClick := Self.Logar;
+    FLogin.btnSair.OnClick := Self.Sair;
+    FLogin.ShowModal;
+  finally
+    FreeAndNil(FLogin);
+  end;
+  {$endregion }
+end;
+
+procedure TControllerLogin.Logar(Sender: TObject);
+
+begin
+showmessage('teste');
+end;
+
+procedure TControllerLogin.sair(Sender: TObject);
+begin
+showmessage('teste');
+end;
+
+end.

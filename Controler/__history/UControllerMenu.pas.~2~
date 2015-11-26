@@ -1,0 +1,29 @@
+unit UControllerMenu;
+
+interface
+uses SysUtils, Forms, Windows, Dialogs,Generics.Collections, uMenuPrincipal;
+Type
+  TControllerMenu = class
+  private
+    FMenu:TMenuPrincipal;
+  //  Procedure AbreTela(Sender:TObject);
+
+  public
+  Constructor Create;
+  end;
+
+implementation
+
+constructor TControllerMenu.Create;
+begin
+  FMenu := TMenuPrincipal.Create(Application);
+  try
+  FMenu.showModal;
+  finally
+    FreeAndNil(FMenu);
+  end;
+end;
+
+
+
+end.

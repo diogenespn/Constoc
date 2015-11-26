@@ -1,0 +1,68 @@
+unit UControllerLogin;
+
+interface
+uses SysUtils, vcl.Forms, Windows, Dialogs, Generics.Collections,uFrmLogin,
+     uLoginModel,uLoginDAO,uMenuPrincipal,UControllerMenu;
+type
+  TControllerLogin = class
+    private
+    FLogin:TfrmLogin;
+    procedure Logar(Sender:TObject);
+    procedure Sair(Sender:TObject);
+  public
+    constructor Create;
+
+  end;
+
+implementation
+
+constructor TControllerLogin.Create;
+begin
+  {$region 'Prepare the events of each control'}
+  FLogin := TFrmLogin.Create(nil);
+  try
+    FLogin.btnLogar.OnClick := Self.Logar;
+    FLogin.btnSair.OnClick := Self.Sair;
+    FLogin.ShowModal;
+  finally
+    FreeAndNil(FLogin);
+  end;
+  {$endregion }
+end;
+
+procedure TControllerLogin.Logar(Sender: TObject);
+var
+  LoginModel: TLoginModel;
+  LoginDAO: TLoginDAO;
+ begin
+  LoginModel := TLoginModel.Create; // cria Objeto na memoria
+  LoginDAO := TLoginDAO.Create;
+
+  if (FLogin.edtUsuario.Text = '') or (FLogin.edtSenha.Text = '') then
+    raise Exception.Create('Informe Usuario e Senha')
+  else
+  begin
+    try
+      LoginModel.Usuario := FLogin.edtUsuario.Text;
+      LoginModel.Senha := FLogin.edtSenha.Text;
+      if LoginDAO.Logar(LoginModel) then
+      begin
+        ShowMessage('Login realizado com sucesso');
+        TControllerMenu.Create;
+      end
+      else
+        ShowMessage('Falha no acesso');
+    finally
+      FreeAndNil(LoginModel);
+      FreeAndNil(LoginDAO);
+    end;
+  end;
+
+end;
+
+procedure TControllerLogin.sair(Sender: TObject);
+begin
+  Application.Terminate;
+end;
+
+end.

@@ -1,0 +1,17 @@
+unit UControllerLogin;
+
+interface
+uses SysUtils, Forms, Windows, Dialogs, Generics.Collections;
+
+type
+  TControllerLogin = class
+    private
+    FLogin:frmLogin;
+  public
+    constructor
+  end;
+implementation
+
+uses uFrmLogin, uLoginModel;
+
+end.

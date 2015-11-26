@@ -1,0 +1,82 @@
+unit uMenuPrincipal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.Imaging.jpeg,
+  Vcl.ExtCtrls, Vcl.ImgList, Vcl.Buttons, Vcl.StdCtrls;
+
+type
+  TMenuPrincipal = class(TForm)
+    menu: TMainMenu;
+    Cadastro1: TMenuItem;
+    Pessoa1: TMenuItem;
+    Produto1: TMenuItem;
+    Operaes1: TMenuItem;
+    Entradas1: TMenuItem;
+    Saidas1: TMenuItem;
+    Image1: TImage;
+    Sair1: TMenuItem;
+    Pais1: TMenuItem;
+    Estado1: TMenuItem;
+    Cidade1: TMenuItem;
+    Panel1: TPanel;
+    ImageList1: TImageList;
+    Button1: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Sair1Click(Sender: TObject);
+    procedure Pessoa1Click(Sender: TObject);
+    procedure Cidade1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  MenuPrincipal: TMenuPrincipal;
+
+implementation
+
+{$R *.dfm}
+
+uses uFrmLogin, uCadastroPessoa, uCadastroCidade, UControllerLogin;
+
+procedure TMenuPrincipal.Cidade1Click(Sender: TObject);
+begin
+ try
+   CadastroCidade:=TCadastroCidade.create(self);
+   CadastroCidade.ShowModal;
+ finally
+   freeAndNil(CadastroCidade);
+ end;
+end;
+
+procedure TMenuPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+Application.Terminate;
+end;
+
+procedure TMenuPrincipal.FormCreate(Sender: TObject);
+begin
+//frmLogin.Hide;
+end;
+
+procedure TMenuPrincipal.Pessoa1Click(Sender: TObject);
+begin
+ try
+        CadastroPessoa:=TCadastroPessoa.create(self);
+        CadastroPessoa.ShowModal;
+      finally
+        freeAndNil(CadastroPessoa);
+      end;
+end;
+
+procedure TMenuPrincipal.Sair1Click(Sender: TObject);
+begin
+Application.Terminate;
+end;
+
+end.
